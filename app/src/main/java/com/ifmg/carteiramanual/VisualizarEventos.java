@@ -2,6 +2,8 @@ package com.ifmg.carteiramanual;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class VisualizarEventos extends AppCompatActivity {
+
+
 
     private TextView tituloTxt;
     private Button novoBtn;
@@ -45,12 +49,18 @@ public class VisualizarEventos extends AppCompatActivity {
         novoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent trocaAct = new Intent(VisualizarEventos.this, CadastroEdicaoEvento.class);
 
-                //ajuste de qual operacao executar
-                //add putExtra
+                if(operacao !=-1){
+                    Intent trocaAct = new Intent(VisualizarEventos.this, CadastroEdicaoEvento.class);
+                    if(operacao ==0){
+                        trocaAct.putExtra("acao", 0);
+                    }else{
+                        trocaAct.putExtra("acao",1);
+                    }
 
-                startActivity(trocaAct);
+                    startActivity(trocaAct);
+                }
+
             }
         });
     }
@@ -66,4 +76,6 @@ public class VisualizarEventos extends AppCompatActivity {
             }
         }
     }
+
+
 }

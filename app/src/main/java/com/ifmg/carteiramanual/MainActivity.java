@@ -104,10 +104,10 @@ public class MainActivity extends AppCompatActivity {
         novoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventosDB db = new EventosDB(MainActivity.this);
-                db.insereEventos();
+               // EventosDB db = new EventosDB(MainActivity.this);
+               // db.insereEventos();
 
-                Toast.makeText(MainActivity.this, db.getDatabaseName(), Toast.LENGTH_LONG).show();
+               // Toast.makeText(MainActivity.this, db.getDatabaseName(), Toast.LENGTH_LONG).show();
 
             }
         });

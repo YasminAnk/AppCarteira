@@ -1,5 +1,6 @@
 package ferramentas;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,6 +8,8 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
+
+import modelo.Evento;
 
 public class EventosDB extends SQLiteOpenHelper {
 
@@ -26,11 +29,22 @@ public class EventosDB extends SQLiteOpenHelper {
         db.execSQL(criaTabela);
     }
 
-    public void insereEventos(){
+    public void insereEventos(Evento novoEvento){
 
         try (SQLiteDatabase db = this.getWritableDatabase()) {
-            String sql = "INSERT into evento (nome, valor) VALUES ('evento 1', 89)";
-            db.execSQL(sql);
+
+            ContentValues valores = new ContentValues();
+
+            valores.put("nome", novoEvento.getNome());
+            valores.put("valor", novoEvento.getValor());
+            valores.put("imagem", novoEvento.getCaminhoFoto());
+            valores.put("dataocorreu", novoEvento.getOcorreu().getTime());
+            valores.put("datacadastro", novoEvento.getCadastro().getTime());
+            valores.put("datavalida", novoEvento.getValida().getTime());
+
+
+
+            db.insert("evento", null, valores);
 
         }catch (SQLiteException ex){
 
