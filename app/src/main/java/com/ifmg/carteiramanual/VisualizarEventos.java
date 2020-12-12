@@ -1,9 +1,5 @@
 package com.ifmg.carteiramanual;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.DatePickerDialog;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +7,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class VisualizarEventos extends AppCompatActivity {
 
@@ -29,13 +27,13 @@ public class VisualizarEventos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visualizar_eventos);
 
-        tituloTxt=(TextView) findViewById(R.id.tituloTxt);
-        totalTxt=(TextView) findViewById(R.id.valorTotalTxt);
+        tituloTxt = (TextView) findViewById(R.id.tituloTxt);
+        totalTxt = (TextView) findViewById(R.id.valorTotalTxt);
 
-        listaEventos= (ListView) findViewById(R.id.listaEventos);
+        listaEventos = (ListView) findViewById(R.id.listaEventos);
 
-        novoBtn = (Button) findViewById(R.id.novoButton);
-        cancelarBtn = (Button) findViewById(R.id.cancelarBtn);
+        novoBtn = (Button) findViewById(R.id.novoVisualizarBtn);
+        cancelarBtn = (Button) findViewById(R.id.cancelarVisaulizarBtn);
 
         Intent intencao = getIntent();
         operacao = intencao.getIntExtra("acao", -1);
@@ -45,25 +43,24 @@ public class VisualizarEventos extends AppCompatActivity {
 
     }
 
-    private void cadastrarEventos(){
+    private void cadastrarEventos() {
         novoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(operacao !=-1){
+                if (operacao != -1) {
                     Intent trocaAct = new Intent(VisualizarEventos.this, CadastroEdicaoEvento.class);
-                    if(operacao ==0){
-                        trocaAct.putExtra("acao", 0);
-                    }else{
-                        trocaAct.putExtra("acao",1);
-                    }
 
+                    if (operacao == 0) {
+                        trocaAct.putExtra("acao", 0);
+                    } else {
+                        trocaAct.putExtra("acao", 1);
+                    }
                     startActivity(trocaAct);
                 }
-
             }
         });
     }
+
     private void ajusteOperacao(){
         if(operacao==0){
             tituloTxt.setText("Entrada");

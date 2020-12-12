@@ -1,20 +1,15 @@
 package com.ifmg.carteiramanual;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Calendar;
-import java.util.EventObject;
-
-import ferramentas.EventosDB;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -126,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent trocaActivity = new Intent(MainActivity.this, VisualizarEventos.class);
-                trocaActivity.putExtra("acao",1 );
+                trocaActivity.putExtra("acao", 1);
                 startActivity(trocaActivity);
             }
         });
