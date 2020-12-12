@@ -1,7 +1,5 @@
 package com.ifmg.carteiramanual;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +11,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,7 +46,7 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro_edicao_evento);
 
-        tituloTxt = (TextView) findViewById(R.id.tituloTxt);
+        tituloTxt = (TextView) findViewById(R.id.tituloCadastroTxt);
         nomeTxt = (EditText) findViewById(R.id.nomeCadastroTxt);
         valorTxt = (EditText) findViewById(R.id.valorCadastroTxt);
         dataTxt = (TextView) findViewById(R.id.dataCadastroTxt);
