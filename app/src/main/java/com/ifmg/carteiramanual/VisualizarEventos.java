@@ -10,8 +10,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class VisualizarEventos extends AppCompatActivity {
+import java.util.ArrayList;
 
+import ferramentas.EventosDB;
+import modelo.Evento;
+
+public class VisualizarEventos extends AppCompatActivity {
 
 
     private TextView tituloTxt;
@@ -20,8 +24,12 @@ public class VisualizarEventos extends AppCompatActivity {
     private ListView listaEventos;
     private TextView totalTxt;
 
+    private ArrayList<Evento> eventos;
+    private itemListaEventos adapter;
+
     //operacao = 0 indica entrada e operacao = 1 idica saida
     private int operacao = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +49,7 @@ public class VisualizarEventos extends AppCompatActivity {
         ajusteOperacao();
         cadastrarEventos();
 
+        carregaEventosLista();
     }
 
     private void cadastrarEventos() {
@@ -64,14 +73,31 @@ public class VisualizarEventos extends AppCompatActivity {
     private void ajusteOperacao(){
         if(operacao==0){
             tituloTxt.setText("Entrada");
-        }else {
-            if (operacao == 1){
-                tituloTxt.setText("Saida");
-            }else{
+        } else {
+            if (operacao == 1) {
+                tituloTxt.setText("Saidas");
+            } else {
                 //erro na config. da intent
                 Toast.makeText(VisualizarEventos.this, "erro no parametro acao", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void carregaEventosLista() {
+        eventos = new ArrayList<>();
+        //eventos.add(new Evento("Padaria", 10.6, new Date(), new Date(),
+        //new Date(), null ));
+        //eventos.add(new Evento("Supermercado", 150.8, new Date(), new Date(),
+        // new Date(), null ));
+
+        EventosDB db = new EventosDB(VisualizarEventos.this);
+        eventos = db.buscaEventos(operacao, MainActivity.dataApp);
+
+        //direto do banco de dados
+
+        adapter = new itemListaEventos(getApplicationContext(), eventos);
+        listaEventos.setAdapter(adapter);
+
     }
 
 

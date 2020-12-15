@@ -4,11 +4,13 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,8 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import ferramentas.EventosDB;
 import modelo.Evento;
@@ -34,6 +38,8 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
     private Button salvarBtn;
     private Button cancelarBtn;
     private ImageView foto;
+
+    private Spinner mesRepeticao;
 
     private Calendar calendarioTemp;
 
@@ -55,25 +61,40 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
         foto = (ImageView) findViewById(R.id.fotoCadastro);
         salvarBtn = (Button) findViewById(R.id.salvarCadastroBtn);
         cancelarBtn = (Button) findViewById(R.id.cancelarCadastroBtn);
+        mesRepeticao = (Spinner) findViewById(R.id.mesesSpinner);
 
         Intent intencao = getIntent();
         acao = intencao.getIntExtra("acao", -1);
 
         ajustaPorAcao();
         cadastraEventos();
+        confSpinner();
 
-}
+    }
 
-private void ajustaPorAcao(){
+
+    private void confSpinner() {
+        List<String> meses = new ArrayList<>();
+
+        //permitiremos a repetição de apenas 24 meses de um evento
+        for (int i = 1; i <= 24; i++) {
+            meses.add(i + "");
+        }
+        ArrayAdapter<String> listaAdapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, meses);
+
+        mesRepeticao.setAdapter(listaAdapter);
+    }
+
+    private void ajustaPorAcao() {
         // recuperando a data de hoje
-    Calendar hoje = Calendar.getInstance();
-    SimpleDateFormat formatador = new SimpleDateFormat("dd/mm/yyyy");
-    dataTxt.setText((formatador.format(hoje.getTime())));
+        Calendar hoje = Calendar.getInstance();
+        SimpleDateFormat formatador = new SimpleDateFormat("dd/mm/yyyy");
+        dataTxt.setText((formatador.format(hoje.getTime())));
 
-    switch (acao){
-        case 0:{
+        switch (acao) {
+            case 0: {
 
-            tituloTxt.setText("Cadast. Entrada");
+                tituloTxt.setText("Cadast. Entrada");
         }break;
         case 1:{
 

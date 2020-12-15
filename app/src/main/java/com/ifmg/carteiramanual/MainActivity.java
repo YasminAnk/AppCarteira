@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private Button novoButton;
 
     private Calendar hoje;
-    private Calendar dataApp;
+    static Calendar dataApp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
