@@ -155,9 +155,9 @@ public class MainActivity extends AppCompatActivity {
         //exibindo os valores
         double saldoTotal = entradattl - saidattl;
 
-        entrada.setText(String.format("¢.2f", entradattl));
-        saida.setText(String.format("¢.2f", saidattl));
-        saldo.setText(String.format("¢.2f", saldoTotal));
+        entrada.setText(String.format("%.2f", entradattl));
+        saida.setText(String.format("%.2f", saidattl));
+        saldo.setText(String.format("%.2f", saldoTotal));
 
     }
 

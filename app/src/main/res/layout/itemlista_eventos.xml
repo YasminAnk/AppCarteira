@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- delimita o espaço do item-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/apenasborda"
+        android:orientation="vertical"
+        android:padding="4dp">
+
+        <!-- Nome evento-->
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Nome: "
+                android:textColor="@color/White"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/nomeItemTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nome evento "
+                android:textColor="@color/White"
+                android:textSize="18dp" />
+
+
+        </LinearLayout>
+
+        <!-- Valor e data do evento -->
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Valor: R$"
+                android:textColor="@color/White"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/valorItemTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0,00"
+                android:textColor="@color/White"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:text="Data: "
+                android:textColor="@color/White"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/dataItemTxt"
+                android:layout_width="111dp"
+                android:layout_height="wrap_content"
+                android:text="dd/mm/yyyy"
+                android:textColor="@color/White"
+                android:textSize="18dp" />
+
+        </LinearLayout>
+
+        <!-- Foto e repetição-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:textColor="@color/White">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Foto: "
+                android:textColor="@color/White"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/fotoItemTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Não"
+                android:textColor="@color/White"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:text="Repete: "
+                android:textColor="@color/White"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/repeteItemTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Não"
+                android:textColor="@color/White"
+                android:textSize="18dp" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

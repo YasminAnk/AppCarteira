@@ -112,7 +112,7 @@ public class VisualizarEventos extends AppCompatActivity {
         for (int i = 0; i < eventos.size(); i++) {
             total = eventos.get(i).getValor();
         }
-        totalTxt.setText(String.format("¢.2f", total));
+        totalTxt.setText(String.format("%.2f", total));
 
 
     }
