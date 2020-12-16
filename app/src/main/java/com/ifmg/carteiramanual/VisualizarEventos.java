@@ -61,18 +61,27 @@ public class VisualizarEventos extends AppCompatActivity {
 
                     if (operacao == 0) {
                         trocaAct.putExtra("acao", 0);
+                        startActivityForResult(trocaAct, 0);
                     } else {
                         trocaAct.putExtra("acao", 1);
+                        startActivityForResult(trocaAct, 1);
                     }
-                    startActivity(trocaAct);
+
                 }
+            }
+        });
+
+        cancelarBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
 
     private void ajusteOperacao(){
         if(operacao==0){
-            tituloTxt.setText("Entrada");
+            tituloTxt.setText("Entradas");
         } else {
             if (operacao == 1) {
                 tituloTxt.setText("Saidas");
@@ -98,6 +107,21 @@ public class VisualizarEventos extends AppCompatActivity {
         adapter = new itemListaEventos(getApplicationContext(), eventos);
         listaEventos.setAdapter(adapter);
 
+        //somando todos os valorea p mostrar no final
+        double total = 0.0;
+        for (int i = 0; i < eventos.size(); i++) {
+            total = eventos.get(i).getValor();
+        }
+        totalTxt.setText(String.format("¢.2f", total));
+
+
+    }
+
+    protected void onActivityResult(int cod, int result, Intent data) {
+
+        super.onActivityResult(cod, result, data);
+
+        carregaEventosLista();
     }
 
 

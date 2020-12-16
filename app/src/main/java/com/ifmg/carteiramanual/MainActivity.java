@@ -9,7 +9,11 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+
+import ferramentas.EventosDB;
+import modelo.Evento;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
         mostraDataApp();
 
+        atualizaValores();
+
 
     }
 
@@ -78,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         }
         //aqui temos que fazer uma busca no banco de dados (avaliar se existem meses anteriores cadastrados)
         mostraDataApp();
+        atualizaValores();
     }
 
     //metodo responsavel por implementar todos os eventos de botoes
@@ -113,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent trocaActivity = new Intent(MainActivity.this, VisualizarEventos.class);
                 trocaActivity.putExtra("acao", 0);
                 //pedimos para executar a Activity passada como parametro
-                startActivity(trocaActivity);
+                startActivityForResult(trocaActivity, 0);
             }
         });
 
@@ -122,9 +129,43 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent trocaActivity = new Intent(MainActivity.this, VisualizarEventos.class);
                 trocaActivity.putExtra("acao", 1);
-                startActivity(trocaActivity);
+                startActivityForResult(trocaActivity, 1);
             }
         });
+    }
+
+    private void atualizaValores() {
+
+
+        EventosDB db = new EventosDB(MainActivity.this);
+        ArrayList<Evento> saidas = db.buscaEventos(1, dataApp);
+        ArrayList<Evento> entradas = db.buscaEventos(0, dataApp);
+
+        //somando todos os valores dos eventos
+        double entradattl = 0.0;
+        double saidattl = 0.0;
+
+        for (int i = 0; i < entradas.size(); i++) {
+            entradattl += entradas.get(i).getValor();
+        }
+        for (int i = 0; i < saidas.size(); i++) {
+            saidattl += saidas.get(i).getValor();
+        }
+
+        //exibindo os valores
+        double saldoTotal = entradattl - saidattl;
+
+        entrada.setText(String.format("¢.2f", entradattl));
+        saida.setText(String.format("¢.2f", saidattl));
+        saldo.setText(String.format("¢.2f", saldoTotal));
+
+    }
+
+    protected void onActivityResult(int cod, int result, Intent data) {
+
+        super.onActivityResult(cod, result, data);
+
+        atualizaValores();
     }
 
 

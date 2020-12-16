@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -83,6 +82,8 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
         ArrayAdapter<String> listaAdapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, meses);
 
         mesRepeticao.setAdapter(listaAdapter);
+        mesRepeticao.setEnabled(false);
+
     }
 
     private void ajustaPorAcao() {
@@ -123,6 +124,7 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
                 dataTxt.setText(dia+"/"+(mes+1)+"/"+ano);
             }
         }, calendarioTemp.get(Calendar.YEAR), calendarioTemp.get(Calendar.MONTH), calendarioTemp.get(Calendar.DAY_OF_MONTH));
+
         dataTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,30 +138,52 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
                 cadastrarNovoEvento();
             }
         });
+
+        repeteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (repeteBtn.isChecked()) {
+                    mesRepeticao.setEnabled(true);
+                } else {
+                    mesRepeticao.setEnabled(false);
+                }
+            }
+        });
+
+        cancelarBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //termina a exec de uma activity e retorna a anterior
+                finish();
+            }
+        });
     }
 
 
-    private void cadastrarNovoEvento(){
+    private void cadastrarNovoEvento() {
         String nome = nomeTxt.getText().toString();
         double valor = Double.parseDouble(valorTxt.getText().toString());
 
-        if(acao ==1 || acao ==3){
+        if (acao == 1 || acao == 3) {
             valor *= -1;
         }
-        SimpleDateFormat formatador = new SimpleDateFormat("dd/mm/yyyy");
-        String dataStr = dataTxt.getText().toString();
+        //SimpleDateFormat formatador = new SimpleDateFormat("dd/MM/yyyy");
+        //ææString dataStr = dataTxt.getText().toString();
 
-        try{
-            Date diaEvento = formatador.parse(dataStr);
+        //try{
+        Date diaEvento = calendarioTemp.getTime();
 
-            // um novo calendario para calcular a data limite
-            Calendar dataLimite = Calendar.getInstance();
-            dataLimite.setTime(calendarioTemp.getTime());
+        // um novo calendario para calcular a data limite
+        Calendar dataLimite = Calendar.getInstance();
+        dataLimite.setTime(calendarioTemp.getTime());
 
-            //verificando se este evento irá repetir por alguns meses
-            if(repeteBtn.isChecked()){
-                //por enquanto estamos considerando apenas um mes
-            }
+        //verificando se este evento irá repetir por alguns meses
+        if (repeteBtn.isChecked()) {
+            //por enquanto estamos considerando apenas um mes
+            String stro = (String) mesRepeticao.getSelectedItem();
+            dataLimite.add(Calendar.MONTH, Integer.parseInt(stro));
+
+        }
 
             //setando para o ultimo dia do mes limite
             dataLimite.set(Calendar.DAY_OF_MONTH, dataLimite.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -173,10 +197,10 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
             Toast.makeText(CadastroEdicaoEvento.this, "Cadastro feito com sucesso!", Toast.LENGTH_LONG).show();
             finish();
 
-        }catch (ParseException ex){
+        //}catch (ParseException ex){
             System.err.println("erro no formato data");
         }
 
 
     }
-}
+

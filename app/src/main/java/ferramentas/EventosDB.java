@@ -20,16 +20,15 @@ public class EventosDB extends SQLiteOpenHelper {
 
     public EventosDB(Context context){
         super(context, "evento", null, 1);
-        contexto = context;
+        this.contexto = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String criaTabela ="CREATE TABLE IF NOT EXISTS eventos(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                " nome TEXT, valor REAL, imagem TEXT, dataocorreu DATE, datacadastro DATE" +
-                ", datavalida DATE )";
+        final String criaTb = "CREATE TABLE IF NOT EXISTS evento(id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT," +
+                " valor REAL, imagem TEXT, dataocorreu DATE, datacadastro DATE, datavalida DATE)";
 
-        db.execSQL(criaTabela);
+        db.execSQL(criaTb);
     }
 
     public void insereEventos(Evento novoEvento){
@@ -37,12 +36,11 @@ public class EventosDB extends SQLiteOpenHelper {
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
             ContentValues valores = new ContentValues();
-
             valores.put("nome", novoEvento.getNome());
             valores.put("valor", novoEvento.getValor());
             valores.put("imagem", novoEvento.getCaminhoFoto());
             valores.put("dataocorreu", novoEvento.getOcorreu().getTime());
-            valores.put("datacadastro", novoEvento.getCadastro().getTime());
+            valores.put("datacadastro", new Date().getTime());
             valores.put("datavalida", novoEvento.getValida().getTime());
 
 
@@ -69,15 +67,24 @@ public class EventosDB extends SQLiteOpenHelper {
         Calendar dia1 = Calendar.getInstance();
         dia1.setTime(date.getTime());
         dia1.set(Calendar.DAY_OF_MONTH, 1);
+        dia1.set(Calendar.HOUR, -12);
+        dia1.set(Calendar.MINUTE, 0);
+        dia1.set(Calendar.SECOND, 0);
+
 
         //ultimo dia do mes
         Calendar dia2 = Calendar.getInstance();
         dia2.setTime(date.getTime());
         dia2.set(Calendar.DAY_OF_MONTH, dia2.getActualMaximum(Calendar.DAY_OF_MONTH));
+        dia2.set(Calendar.HOUR, 23);
+        dia2.set(Calendar.MINUTE, 59);
+        dia2.set(Calendar.MILLISECOND, 999);
+        dia2.set(Calendar.SECOND, 59);
 
 
-        String sql = "SELECT * FROM evento WHERE dataocorreu < " + dia2.getTime().getTime() +
-                " AND dataocorreu >= " + dia1.getTime().getTime();
+        String sql = "SELECT * FROM evento WHERE ((datavalida < " + dia2.getTime().getTime() +
+                " AND datavalida >= " + dia1.getTime().getTime() + ") OR (dataocorreu <= +" + dia2.getTime().getTime() +
+                " AND datavalida >= " + dia1.getTime().getTime() + ") )";
         sql += " AND valor ";
 
         if (op == 0) {
@@ -105,7 +112,7 @@ public class EventosDB extends SQLiteOpenHelper {
                     Date datacadastro = new Date(cursor.getLong(5));
                     Date datavalida = new Date(cursor.getLong(6));
 
-                    Evento temporario = new Evento((long) id, nome, valor, dataocorreu, datacadastro, datavalida, urlfoto);
+                    Evento temporario = new Evento((long) id, nome, valor, datacadastro, datavalida, dataocorreu, urlfoto);
 
                     resultado.add(temporario);
                 } while (cursor.moveToNext());
