@@ -31,7 +31,57 @@ public class EventosDB extends SQLiteOpenHelper {
         db.execSQL(criaTb);
     }
 
-    public void insereEventos(Evento novoEvento){
+    public void updateEvento(Evento eventoAtualizado) {
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+
+            ContentValues valores = new ContentValues();
+            valores.put("nome", eventoAtualizado.getNome());
+            valores.put("valor", eventoAtualizado.getValor());
+            valores.put("imagem", eventoAtualizado.getCaminhoFoto());
+            valores.put("dataocorreu", eventoAtualizado.getOcorreu().getTime());
+            valores.put("datavalida", eventoAtualizado.getValida().getTime());
+
+            db.update("evento", valores, "id = ?", new String[]{eventoAtualizado.getId() + ""});
+
+        } catch (SQLiteException ex) {
+            System.err.println("erro na atualização do evento");
+            ex.printStackTrace();
+        }
+    }
+
+    public Evento buscaEvtId(int id) {
+        String sql = "SELECT * FROM  evento WHERE id = " + id;
+        Evento resultado = null;
+
+        try (SQLiteDatabase db = this.getWritableDatabase()) {
+            //executando a sql
+            Cursor tupla = db.rawQuery(sql, null);
+
+            //extraindo as informaçoes do evento
+            if (tupla.moveToFirst()) {
+
+                String nome = tupla.getString(1);
+                double valor = tupla.getDouble(2);
+                if (valor < 0) {
+                    valor *= -1;
+                }
+                String urlfoto = tupla.getString(3);
+                Date dataocorreu = new Date(tupla.getLong(4));
+                Date datacadastro = new Date(tupla.getLong(5));
+                Date datavalida = new Date(tupla.getLong(6));
+
+
+                resultado = new Evento(id, nome, valor, datacadastro, datavalida, dataocorreu, urlfoto);
+            }
+
+        } catch (SQLiteException ex) {
+            System.err.println("erro na busca do evento pelo id");
+            ex.printStackTrace();
+        }
+        return resultado;
+    }
+
+    public void insereEventos(Evento novoEvento) {
 
         try (SQLiteDatabase db = this.getWritableDatabase()) {
 
@@ -55,9 +105,7 @@ public class EventosDB extends SQLiteOpenHelper {
 
     }
 
-    public void atualizaEventos() {
 
-    }
 
     public ArrayList<Evento> buscaEventos(int op, Calendar date) {
 

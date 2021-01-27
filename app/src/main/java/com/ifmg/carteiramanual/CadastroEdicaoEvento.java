@@ -2,7 +2,11 @@ package com.ifmg.carteiramanual;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -16,11 +20,15 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import ferramentas.EventosDB;
 import modelo.Evento;
@@ -37,6 +45,9 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
     private Button salvarBtn;
     private Button cancelarBtn;
     private ImageView foto;
+    private Evento eventoSelecionado;
+
+    private String nomeFoto;
 
     private Spinner mesRepeticao;
 
@@ -96,32 +107,76 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
             case 0: {
 
                 tituloTxt.setText("Cadast. Entrada");
-        }break;
-        case 1:{
+            }
+            break;
+            case 1: {
 
-            tituloTxt.setText("Cadast. Saída");
-        }break;
-        case 2:{
+                tituloTxt.setText("Cadast. Saída");
+            }
+            break;
+            case 2: {
 
-            tituloTxt.setText("Edição Entrada");
-        }break;
-        case 3:{
+                tituloTxt.setText("Edição Entrada");
+                ajusteEdicao();
+            }
+            break;
+            case 3: {
 
-            tituloTxt.setText("Edição Saída");
-        }break;
-        default:{
+                tituloTxt.setText("Edição Saída");
+                ajusteEdicao();
+            }
+            break;
+            default: {
+
+            }
+        }
+    }
+
+
+    private void ajusteEdicao() {
+        cancelarBtn.setText("excluir");
+        salvarBtn.setText("atualizar");
+
+        //carregando a info do bd
+        int id = Integer.parseInt(getIntent().getStringExtra("id"));
+        if (id != 0) {
+            EventosDB db = new EventosDB(CadastroEdicaoEvento.this);
+            eventoSelecionado = db.buscaEvtId(id);
+
+            SimpleDateFormat formatar = new SimpleDateFormat("dd/MM/yyyy");
+            //carregando as informaçoes dos campos vindos do banco
+            nomeTxt.setText(eventoSelecionado.getNome());
+            valorTxt.setText(eventoSelecionado.getValor() + "");
+            dataTxt.setText(formatar.format(eventoSelecionado.getOcorreu()));
+            nomeFoto = eventoSelecionado.getCaminhoFoto();
+            CarregarImg();
+
+            Calendar d1 = Calendar.getInstance();
+            d1.setTime(eventoSelecionado.getValida());
+
+            Calendar d2 = Calendar.getInstance();
+            d2.setTime(eventoSelecionado.getOcorreu());
+            repeteBtn.setChecked(d1.get(Calendar.MONTH) != d2.get(Calendar.MONTH) ? true : false);
+
+            if (repeteBtn.isChecked()) {
+                mesRepeticao.setEnabled(true);
+
+                //calculo da diferença do mes do cadastro e mes valido
+                mesRepeticao.setSelection(d1.get(Calendar.MONTH) - d2.get(Calendar.MONTH) - 1);
+            }
+        } else {
 
         }
-    } }
+    }
 
-    private void cadastraEventos(){
+    private void cadastraEventos() {
 
         calendarioTemp = Calendar.getInstance();
         calendarioUsuario = new DatePickerDialog(CadastroEdicaoEvento.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int ano, int mes, int dia) {
                 calendarioTemp.set(ano, mes, dia);
-                dataTxt.setText(dia+"/"+(mes+1)+"/"+ano);
+                dataTxt.setText(dia + "/" + (mes + 1) + "/" + ano);
             }
         }, calendarioTemp.get(Calendar.YEAR), calendarioTemp.get(Calendar.MONTH), calendarioTemp.get(Calendar.DAY_OF_MONTH));
 
@@ -135,7 +190,12 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
         salvarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cadastrarNovoEvento();
+                if (acao < 2) {
+                    cadastrarNovoEvento();
+                } else {
+                    //faremos um update do evento
+                    updateEvento();
+                }
             }
         });
 
@@ -153,12 +213,96 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
         cancelarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //termina a exec de uma activity e retorna a anterior
-                finish();
+
+                if (acao < 2) {
+
+
+                    //termina a exec de uma activity e retorna a anterior
+                    finish();
+                } else {
+                    //será chamado o metodo de delete do bd
+                }
+            }
+        });
+
+        fotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(camera, 100);
             }
         });
     }
 
+    private void salvarimagem(Bitmap img) {
+        Random gerador = new Random();
+        Date instante = new Date();
+
+        //definindo o nome do arqu8ivo foto
+        String nome = gerador.nextInt() + "" + instante.getTime() + ".png";
+        nomeFoto = nome;
+        File sd = Environment.getExternalStorageDirectory();
+        File fotoArquivo = new File(sd, nome);
+
+        //gravando armazenamento do dispositivo
+        try {
+            FileOutputStream gravador = new FileOutputStream(fotoArquivo);
+            img.compress(Bitmap.CompressFormat.PNG, 100, gravador);
+            gravador.flush();
+            gravador.close();
+
+        } catch (Exception ex) {
+            System.err.println("Erro ao armazenar foto");
+            ex.printStackTrace();
+
+        }
+    }
+
+
+    protected void onActivityResult(int RequestCode, int resultCode, Intent data) {
+        super.onActivityResult(RequestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+
+            Bitmap imagemUser = (Bitmap) data.getExtras().get("data");
+            foto.setImageBitmap(imagemUser);
+            foto.setBackground(null);
+
+            salvarimagem(imagemUser);
+        }
+    }
+
+    private void updateEvento() {
+        eventoSelecionado.setNome(nomeTxt.getText().toString());
+        eventoSelecionado.setValor(Double.parseDouble(valorTxt.getText().toString()));
+
+        if (acao == 3) {
+            eventoSelecionado.setValor(eventoSelecionado.getValor() * -1);
+        }
+
+        eventoSelecionado.setOcorreu(calendarioTemp.getTime());
+
+        // um novo calendario para calcular a data limite
+        Calendar dataLimite = Calendar.getInstance();
+        dataLimite.setTime(calendarioTemp.getTime());
+
+        //verificando se este evento irá repetir por alguns meses
+        if (repeteBtn.isChecked()) {
+            //por enquanto estamos considerando apenas um mes
+            String stro = (String) mesRepeticao.getSelectedItem();
+            dataLimite.add(Calendar.MONTH, Integer.parseInt(stro));
+
+        }
+        dataLimite.set(Calendar.DAY_OF_MONTH, dataLimite.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+        eventoSelecionado.setValida(dataLimite.getTime());
+        eventoSelecionado.setCaminhoFoto(nomeFoto);
+
+        EventosDB db = new EventosDB(CadastroEdicaoEvento.this);
+        db.updateEvento(eventoSelecionado);
+        finish();
+
+    }
 
     private void cadastrarNovoEvento() {
         String nome = nomeTxt.getText().toString();
@@ -185,22 +329,40 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
 
         }
 
-            //setando para o ultimo dia do mes limite
-            dataLimite.set(Calendar.DAY_OF_MONTH, dataLimite.getActualMaximum(Calendar.DAY_OF_MONTH));
+        //setando para o ultimo dia do mes limite
+        dataLimite.set(Calendar.DAY_OF_MONTH, dataLimite.getActualMaximum(Calendar.DAY_OF_MONTH));
 
-            Evento novoEvento = new Evento(nome, valor, new Date(), dataLimite.getTime(), diaEvento, null );
+        Evento novoEvento = new Evento(nome, valor, new Date(), dataLimite.getTime(), diaEvento, nomeFoto);
 
-            //inserir esse evento no BD
-            EventosDB bd = new EventosDB(CadastroEdicaoEvento.this);
-            bd.insereEventos(novoEvento);
+        //inserir esse evento no BD
+        EventosDB bd = new EventosDB(CadastroEdicaoEvento.this);
+        bd.insereEventos(novoEvento);
 
-            Toast.makeText(CadastroEdicaoEvento.this, "Cadastro feito com sucesso!", Toast.LENGTH_LONG).show();
-            finish();
+        Toast.makeText(CadastroEdicaoEvento.this, "Cadastro feito com sucesso!", Toast.LENGTH_LONG).show();
+        finish();
 
         //}catch (ParseException ex){
-            System.err.println("erro no formato data");
-        }
-
-
+        System.err.println("erro no formato data");
     }
+
+    //método chamado durante a edição de algum evento
+    private void CarregarImg() {
+        if (nomeFoto != null) {
+            File sd = Environment.getExternalStorageDirectory();
+            File arquivoLeitura = new File(sd, nomeFoto);
+            try {
+                FileInputStream leitor = new FileInputStream(arquivoLeitura);
+                Bitmap img = BitmapFactory.decodeStream(leitor);
+
+                foto.setImageBitmap(img);
+                foto.setBackground(null);
+
+            } catch (Exception ex) {
+                System.err.println("Erro na leitura da foto");
+            }
+        }
+    }
+
+
+}
 

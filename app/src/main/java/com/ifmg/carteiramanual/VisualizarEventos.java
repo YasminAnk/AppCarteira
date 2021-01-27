@@ -3,6 +3,7 @@ package com.ifmg.carteiramanual;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -106,6 +107,27 @@ public class VisualizarEventos extends AppCompatActivity {
 
         adapter = new itemListaEventos(getApplicationContext(), eventos);
         listaEventos.setAdapter(adapter);
+
+        listaEventos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int indice, long id) {
+
+                Evento eventoSelecionado = eventos.get(indice);
+
+                Intent novoFluxo = new Intent(VisualizarEventos.this, CadastroEdicaoEvento.class);
+                if (operacao == 0) {
+                    //editando um evento de entrada
+                    novoFluxo.putExtra("acao", 2);
+
+                } else {
+                    //editando um evento de saida
+                    novoFluxo.putExtra("acao", 3);
+                }
+                novoFluxo.putExtra("id", eventoSelecionado.getId() + "");
+
+                startActivityForResult(novoFluxo, operacao);
+            }
+        });
 
         //somando todos os valorea p mostrar no final
         double total = 0.0;
