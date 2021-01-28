@@ -164,8 +164,6 @@ public class CadastroEdicaoEvento extends AppCompatActivity {
                 //calculo da diferença do mes do cadastro e mes valido
                 mesRepeticao.setSelection(d1.get(Calendar.MONTH) - d2.get(Calendar.MONTH) - 1);
             }
-        } else {
-
         }
     }
 

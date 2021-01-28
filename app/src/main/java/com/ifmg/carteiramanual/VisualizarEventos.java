@@ -28,7 +28,8 @@ public class VisualizarEventos extends AppCompatActivity {
     private ArrayList<Evento> eventos;
     private itemListaEventos adapter;
 
-    //operacao = 0 indica entrada e operacao = 1 idica saida
+    //operacao = 0 indica entrada
+    //operacao = 1 idica saida
     private int operacao = -1;
 
     @Override
@@ -81,7 +82,7 @@ public class VisualizarEventos extends AppCompatActivity {
     }
 
     private void ajusteOperacao(){
-        if(operacao==0){
+        if (operacao == 0) {
             tituloTxt.setText("Entradas");
         } else {
             if (operacao == 1) {
